@@ -1,47 +1,41 @@
-{% set apr_ver = "1.7.0" %}
-{% set apu_ver = "1.6.1" %}
+{% set name = "apr" %}
+{% set apr_ver = "1.7.6" %}
+{% set apu_ver = "1.6.3" %}
 {% set api_ver = "1.2.2" %}
-{% set mirror = "https://downloads.apache.org/" %}
+{% set mirror = "https://downloads.apache.org" %}
 
 package:
-  name: apr
+  name: {{ name|lower }}-split
   version: {{ apr_ver }}
 
 source:
-  - url: {{ mirror }}/apr/apr-{{ apr_ver }}.tar.gz
+  - url: {{ mirror }}/{{ name }}/{{ name }}-{{ apr_ver }}.tar.gz
     folder: apr
-    sha256: 48e9dbf45ae3fdc7b491259ffb6ccf7d63049ffacbc1c0977cced095e4c2d5a2
-    patches:
-      - patches/osx-libapr-darwin20-hints.patch
-      # backport of commit 866e1df from upstream
-      - patches/cross-compile-apr-866e1df.patch
-      - patches/cross-compile-osx-arm64-strerror.patch  # [osx and build_platform != target_platform]
-  - url: {{ mirror }}/apr/apr-util-{{ apu_ver }}.tar.gz
+    sha256: 6a10e7f7430510600af25fabf466e1df61aaae910bf1dc5d10c44a4433ccc81d
+  - url: {{ mirror }}/{{ name }}/{{ name }}-util-{{ apu_ver }}.tar.gz
     folder: apr-util
-    sha256: b65e40713da57d004123b6319828be7f1273fbc6490e145874ee1177e112c459
-  - url: {{ mirror }}/apr/apr-iconv-{{ api_ver }}.tar.gz
+    sha256: 2b74d8932703826862ca305b094eef2983c27b39d5c9414442e9976a9acf1983
+  - url: {{ mirror }}/{{ name }}/{{ name }}-iconv-{{ api_ver }}.tar.gz
     folder: apr-iconv
     sha256: ce94c7722ede927ce1e5a368675ace17d96d60ff9b8918df216ee5c1298c6a5e
-  - path: cmake/  # [win]
+  - path: cmake  # [win]
 
 build:
-  number: 5
-  ignore_run_exports:                                           # [win]
-    - expat                                                     # [win]
-  skip: true  # [win and vc<14]
+  number: 0
+  ignore_run_exports:  # [win]
+    - expat            # [win]
+  skip: true           # [win and vc<14]
 
 requirements:
   build:
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}
-    - cmake                                                     # [win]
-    - ninja                                                     # [win]
-    - libtool  # [not win]
-    - make  # [unix]
-    - patch     # [not win]
-    - m2-patch  # [win]
+    - cmake              # [win]
+    - ninja-base         # [win]
+    - libtool            # [unix]
+    - make               # [unix]
   host:
-    - expat                                                     # [win]
-    - {{ compiler('c') }}                                       # [ppc64le]
+    - expat {{ expat }}  # [win]
   run:
     - libapr
     - libaprutil
@@ -57,15 +51,15 @@ outputs:
         - {{ pin_subpackage('libapr', max_pin='x') }}
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
-        - make                                                  # [unix]
-        - cmake                                                 # [win]
-        - ninja                                                 # [win]
-        - libtool  # [not win]
-        - autoconf  # [unix]
-        - automake  # [unix]
-        - gettext  # [unix]
-      host:
+        - cmake       # [win]
+        - ninja-base  # [win]
+        - make        # [unix]
+        - libtool     # [unix]
+        - autoconf    # [unix]
+        - automake    # [unix]
+        - gettext     # [unix]
     script: install_libapr.sh                                   # [unix]
     script: install_libapr.bat                                  # [win]
     test:
@@ -86,15 +80,16 @@ outputs:
         - {{ pin_subpackage('libaprutil', max_pin='x') }}
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
-        - make                                                  # [unix]
-        - cmake                                                 # [win]
-        - ninja                                                 # [win]
-        - libtool  # [not win]
+        - cmake       # [win]
+        - ninja-base  # [win]
+        - make        # [unix]
+        - libtool     # [unix]
       host:
-        - expat
-        - libapr
-        - libapriconv
+        - expat {{ expat }}
+        - libapr {{ apr_ver }}
+        - libapriconv {{ api_ver }}
       run:
         - libapr
         - expat
@@ -119,13 +114,14 @@ outputs:
         - {{ pin_subpackage('libapriconv', max_pin='x') }}
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
-        - make                                                  # [unix]
-        - cmake                                                 # [win]
-        - ninja                                                 # [win]
-        - libtool  # [not win]
+        - cmake       # [win]
+        - ninja-base  # [win]
+        - make        # [unix]
+        - libtool     # [unix]
       host:
-        - libapr
+        - libapr {{ apr_ver }}
       run:
         - libapr
     script: install_libapriconv.sh                              # [unix]
@@ -139,18 +135,17 @@ outputs:
         - test -f ${PREFIX}/lib/libapriconv-1${SHLIB_EXT}       # [unix]
 
 about:
-  home: http://apr.apache.org/
+  home: http://apr.apache.org
   license: Apache-2.0
   license_family: Apache
   license_file: apr/LICENSE
-  summary: Maintains a consistent API with predictable behaviour
+  summary: Maintains a consistent API with predictable behavior
   description: |
     Apache Portable Run-time libraries have been designed to provide a common
     interface to low level routines across any platform.The original goal of APR
     was to combine all code in Apache to one common code base.
-  doc_url: https://apr.apache.org/docs/apr/1.6/index.html
+  doc_url: https://apr.apache.org/docs/apr/1.7/index.html
   dev_url: https://svn.apache.org/viewvc/apr
-  doc_source_url: https://github.com/apache/apr/tree/trunk/docs
 
 extra:
   recipe-maintainers:
