@@ -4,7 +4,6 @@ upstream_sources:
       url: http://archive.apache.org/dist/apr/
       regex: apr-([\d.]+)\.tar\.gz
     packages:
-      - apr
       - libapr
       - libapriconv
       - libaprutil
