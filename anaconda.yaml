@@ -1,9 +1,9 @@
 anaconda_config_version: 1
 upstream_sources:
   - webpage:
-      url: http://archive.apache.org/dist/apr/
+      url: https://www.apache.org/dist/apr/
       regex: apr-([\d.]+)\.tar\.gz
     packages:
       - libapr
-      - libapriconv
       - libaprutil
+      - libapriconv
