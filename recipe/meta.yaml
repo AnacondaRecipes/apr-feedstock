@@ -1,8 +1,8 @@
 {% set name = "apr" %}
 {% set apr_ver = "1.7.6" %}
-{% set apu_ver = "1.6.3" %}
+{% set apu_ver = "1.6.5" %}
 {% set api_ver = "1.2.2" %}
-{% set mirror = "https://downloads.apache.org" %}
+{% set mirror = "https://dlcdn.apache.org" %}
 
 package:
   name: {{ name|lower }}-split
@@ -14,7 +14,7 @@ source:
     sha256: 6a10e7f7430510600af25fabf466e1df61aaae910bf1dc5d10c44a4433ccc81d
   - url: {{ mirror }}/{{ name }}/{{ name }}-util-{{ apu_ver }}.tar.gz
     folder: apr-util
-    sha256: 2b74d8932703826862ca305b094eef2983c27b39d5c9414442e9976a9acf1983
+    sha256: f43a1c8c79eef497a022ec6c99dddbdf57e42001da6ccbfae259631ed5aa2805
   - url: {{ mirror }}/{{ name }}/{{ name }}-iconv-{{ api_ver }}.tar.gz
     folder: apr-iconv
     sha256: ce94c7722ede927ce1e5a368675ace17d96d60ff9b8918df216ee5c1298c6a5e
